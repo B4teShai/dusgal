@@ -104,14 +104,14 @@ export default function HistoryScreen() {
                   onPress={() => setSelectedRange(range)}
                   className={`px-4 py-2 rounded-full ${
                     selectedRange === range 
-                      ? 'bg-primary' 
+                      ? 'bg-[#0ea5e915]' 
                       : 'bg-gray-100'
                   }`}
                 >
                   <Text
                     className={`font-medium ${
                       selectedRange === range
-                        ? 'text-white'
+                        ? 'text-[#0ea5e9]'
                         : 'text-gray-600'
                     }`}
                   >

@@ -15,14 +15,14 @@ export default function WaterSavingTip({ title, description, icon, impact }: Wat
   const { colors } = useTheme();
   
   return (
-    <View className={`${commonStyles.card} shadow-sm`} style={{ backgroundColor: colors.surface }}>
+    <View className={`${commonStyles.card} shadow-sm`} style={{ backgroundColor: colors.primary + '5' }}>
       <View className="flex-row items-start">
         <View style={{ backgroundColor: colors.primary + '15' }} className="p-2 rounded-lg">
-          <Ionicons name={icon} size={24} color={colors.primary} />
+          <Ionicons name={icon} size={24} color={colors.accent.blue} />
         </View>
         <View className="ml-3 flex-1">
+          <Text style={{ color: colors.text.primary }} className="font-medium mb-1">{title}</Text>
           <View className="flex-row items-center justify-between">
-            <Text style={{ color: colors.text.primary }} className="font-medium mb-1">{title}</Text>
             <View style={{ backgroundColor: colors.success + '15' }} className="px-2 py-1 rounded-full">
               <Text style={{ color: colors.success }} className="text-xs font-medium">{impact}</Text>
             </View>
