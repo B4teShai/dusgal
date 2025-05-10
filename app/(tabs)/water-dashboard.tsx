@@ -91,7 +91,7 @@ export default function WaterDashboardScreen() {
               usage="45L"
               icon="shirt-outline"
               color={colors.accent.blue}
-              backgroundColor={colors.primary + '15'}
+              backgroundColor={colors.primary + '5'}
               percentage={37.5}
             />
             <WaterUsageCard
@@ -99,7 +99,7 @@ export default function WaterDashboardScreen() {
               usage="30L"
               icon="water-outline"
               color={colors.accent.purple}
-              backgroundColor={colors.primary + '15'}
+              backgroundColor={colors.primary + '5'}
               percentage={25}
             />
             <WaterUsageCard
@@ -107,20 +107,20 @@ export default function WaterDashboardScreen() {
               usage="15L"
               icon="nutrition-outline"
               color={colors.accent.green}
-              backgroundColor={colors.primary + '15'}
+              backgroundColor={colors.primary + '5'}
               percentage={12.5}
             />
           </View>
 
           {/* Water Saving Tips */}
+           <Text 
+            className="text-xl font-semibold mb-4"
+            style={{ color: colors.text.primary }}
+          >
+            Ус хэмнэх зөвлөмж
+          </Text>
           <View className="rounded-3xl p-6 shadow-sm" style={{ backgroundColor: colors.primary + '15' }}>
             <View className="flex-row justify-between items-center mb-4">
-              <Text 
-                className="text-xl font-semibold"
-                style={{ color: colors.text.primary }}
-              >
-                Ус хэмнэх зөвлөмж
-              </Text>
               <TouchableOpacity>
                 <Text 
                   className="text-sm"
@@ -130,18 +130,23 @@ export default function WaterDashboardScreen() {
                 </Text>
               </TouchableOpacity>
             </View>
+            <View >
             <WaterSavingTip
               title="Угаалгын машиныг бүрэн дүүрэн ажиллуулах"
               description="Угаалгын машиныг бүрэн дүүрэн ажиллуулах нь ус хэмнэхэд тусална."
               icon="shirt-outline"
               impact="30L хэмнэх"
+              
+              
             />
             <WaterSavingTip
               title="Шүршүүрт бага хугацаа байх"
               description="Шүршүүрт 5-10 минут байх нь ус хэмнэхэд тусална."
               icon="water-outline"
               impact="95L хэмнэх"
+              
             />
+            </View>
           </View>
         </View>
       </ScrollView>
