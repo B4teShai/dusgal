@@ -83,12 +83,6 @@ export default function HistoryScreen() {
             >
               Түүх
             </Text>
-            <Text 
-              className="text-lg"
-              style={{ color: colors.text.secondary }}
-            >
-              Усны хэрэглээний түүх
-            </Text>
           </View>
 
           {/* Time Range Selector */}

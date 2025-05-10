@@ -1,5 +1,6 @@
 import { ApolloProvider } from '@apollo/client';
 import { Stack } from 'expo-router';
+import React from 'react';
 import { useColorScheme } from 'react-native';
 import { ThemeProvider } from '../src/context/ThemeContext';
 import { client } from '../src/lib/apollo-client';

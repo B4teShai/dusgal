@@ -79,12 +79,6 @@ export default function SettingsScreen() {
             >
               Тохиргоо
             </Text>
-            <Text 
-              className="text-lg"
-              style={{ color: colors.text.secondary }}
-            >
-              Апп-ын тохиргоо
-            </Text>
           </View>
 
           {/* Profile Section */}
@@ -175,12 +169,6 @@ export default function SettingsScreen() {
 
           {/* App Settings Section */}
           <View className="rounded-3xl p-6 shadow-sm mb-8" style={{ backgroundColor: colors.primary + '15' }}>
-            <Text 
-              className="text-xl font-semibold mb-4"
-              style={{ color: colors.text.primary }}
-            >
-              Апп-ын тохиргоо
-            </Text>
 
             <View className="space-y-2">
               <SettingItem

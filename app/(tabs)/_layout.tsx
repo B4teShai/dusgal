@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { Animated, View } from 'react-native';
 import { useTheme } from '../../src/context/ThemeContext';
 
@@ -22,6 +22,29 @@ export default function TabsLayout() {
       }),
     ]).start();
   };
+
+  const TabIcon = ({ name, color, size, focused }: { name: string; color: string; size: number; focused: boolean }) => (
+    <View style={{ 
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 40,
+      height: 40,
+    }}>
+      {focused && (
+        <Animated.View
+          style={{
+            position: 'absolute',
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: colors.primary + '20',
+            transform: [{ scale: focused ? 1 : 0 }],
+          }}
+        />
+      )}
+      <Ionicons name={name as any} size={size} color={color} />
+    </View>
+  );
 
   return (
     <Tabs
@@ -52,20 +75,15 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="history"
         options={{
-          tabBarIcon: ({ color, size, focused }: { color: string; size: number; focused: boolean }) => (
-            <View style={{ 
-              transform: [{ scale: focused ? 1.1 : 1 }],
-              opacity: focused ? 1 : 0.7,
-            }}>
-              <Ionicons name="time-outline" size={size} color={color} />
-            </View>
+          tabBarIcon: ({ color, size, focused }) => (
+            <TabIcon name="time-outline" color={color} size={size} focused={focused} />
           ),
         }}
       />
       <Tabs.Screen
         name="water-dashboard"
         options={{
-          tabBarIcon: ({ focused }: { focused: boolean }) => (
+          tabBarIcon: ({ focused }) => (
             <Animated.View 
               style={{ 
                 backgroundColor: colors.primary,
@@ -95,16 +113,11 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          tabBarIcon: ({ color, size, focused }: { color: string; size: number; focused: boolean }) => (
-            <View style={{ 
-              transform: [{ scale: focused ? 1.1 : 1 }],
-              opacity: focused ? 1 : 0.7,
-            }}>
-              <Ionicons name="settings-outline" size={size} color={color} />
-            </View>
+          tabBarIcon: ({ color, size, focused }) => (
+            <TabIcon name="settings-outline" color={color} size={size} focused={focused} />
           ),
         }}
       />
     </Tabs>
   );
-} 
+}

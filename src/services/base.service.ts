@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
 export class BaseService {
@@ -16,9 +17,9 @@ export class BaseService {
 
     // Add request interceptor
     this.api.interceptors.request.use(
-      (config: InternalAxiosRequestConfig) => {
+      async (config: InternalAxiosRequestConfig) => {
         // You can add auth token here
-        const token = localStorage.getItem('token');
+        const token = await AsyncStorage.getItem('token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -32,12 +33,12 @@ export class BaseService {
     // Add response interceptor
     this.api.interceptors.response.use(
       (response: AxiosResponse) => response,
-      (error: Error) => {
+      async (error: Error) => {
         // Handle common errors here
         if (axios.isAxiosError(error) && error.response?.status === 401) {
           // Handle unauthorized
-          localStorage.removeItem('token');
-          window.location.href = '/login';
+          await AsyncStorage.removeItem('token');
+          // TODO: Handle navigation to login screen
         }
         return Promise.reject(error);
       }

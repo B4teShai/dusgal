@@ -3,9 +3,9 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import NotificationSection from '../../components/NotificationSection';
 import WaterSavingTip from '../../components/WaterSavingTip';
 import WaterUsageCard from '../../components/WaterUsageCard';
+import NotificationSection from '../../src/components/NotificationSection';
 import { useTheme } from '../../src/context/ThemeContext';
 import { GET_DAILY_SUMMARY, GET_NOTIFICATIONS, GET_WATER_SAVING_TIPS, GET_WATER_USAGE } from '../../src/graphql/queries';
 
@@ -51,12 +51,6 @@ export default function WaterDashboardScreen() {
                 style={{ color: colors.text.primary }}
               >
                 Усны Хэрэглээ
-              </Text>
-              <Text 
-                className="text-lg"
-                style={{ color: colors.text.secondary }}
-              >
-                Өнөөдрийн усны хэрэглээ
               </Text>
             </View>
             <TouchableOpacity 

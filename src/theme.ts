@@ -19,6 +19,9 @@ export const theme = {
         purple: '#8b5cf6', // Violet 500
         green: '#10b981', // Emerald 500
       },
+      opacity: {
+        primary: '#0ea5e915',
+      },
     },
     dark: {
       primary: '#38bdf8', // Sky blue 400
@@ -38,6 +41,9 @@ export const theme = {
         blue: '#60a5fa', // Blue 400
         purple: '#a78bfa', // Violet 400
         green: '#34d399', // Emerald 400
+      },
+      opacity: {
+        primary: '#ffffff15',
       },
     },
   },

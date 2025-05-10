@@ -1,24 +1,75 @@
+import { useLoginMutation } from '@/src/graphql/graphql';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../src/context/ThemeContext';
+
 
 export default function LoginScreen() {
   const { colors, isDarkMode } = useTheme();
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
+  const [phoneNo, setPhoneNo] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [login, { loading, error }] = useLoginMutation();
+  const handleSubmit = async () => {
+    try {
+      if (isLogin) {
+        if (!phoneNo || !password) {
+          Alert.alert('Алдаа', 'Бүх талбарыг бөглөнө үү');
+          return;
+        }
 
-  const handleSubmit = () => {
-    router.replace('/(tabs)/water-dashboard');
+        // Login logic using GraphQL mutation
+        console.log('Attempting login with:', { phoneNo, password });
+        const response = await login({
+          variables: {
+            phoneNo,
+            password
+          }
+        }).catch(error => {
+          console.log('Login mutation error:', error);
+          if (error.networkError) {
+            console.log('Network error details:', error.networkError);
+          }
+          if (error.graphQLErrors) {
+            console.log('GraphQL errors:', error.graphQLErrors);
+          }
+          throw error;
+        });
+
+        console.log('Login response:', response);
+
+        if (response.data?.login) {
+          const { token } = response.data.login;
+          await AsyncStorage.setItem('token', token);
+          router.replace('/(tabs)/water-dashboard');
+        } else {
+          Alert.alert('Алдаа', 'Утасны дугаар эсвэл нууц үг буруу байна');
+        }
+      } else {
+        // Registration logic
+        if (!name || !phoneNo || !password) {
+          Alert.alert('Алдаа', 'Бүх талбарыг бөглөнө үү');
+          return;
+        }
+
+        // TODO: Implement registration mutation
+        Alert.alert('Алдаа', 'Бүртгүүлэх боломжгүй байна');
+      }
+    } catch (error) {
+      console.log('Login error:', error);
+      Alert.alert('Алдаа', 'Алдаа гарлаа. Дараа дахин оролдоно уу');
+    }
   };
 
   const toggleMode = () => {
     setIsLogin(!isLogin);
-    setEmail('');
+    setPhoneNo('');
     setPassword('');
     setName('');
   };
@@ -102,11 +153,11 @@ export default function LoginScreen() {
                 <Ionicons name="mail-outline" size={20} color={colors.text.secondary} />
                 <TextInput
                   className="flex-1 ml-2"
-                  placeholder="И-мэйл хаягаа оруулна уу"
+                  placeholder="Утасны дугаараа оруулна уу"
                   placeholderTextColor={colors.text.light}
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
+                  value={phoneNo}
+                  onChangeText={setPhoneNo}
+                  keyboardType="phone-pad"
                   autoCapitalize="none"
                   style={{ color: colors.text.primary }}
                 />
@@ -135,9 +186,16 @@ export default function LoginScreen() {
                   placeholderTextColor={colors.text.light}
                   value={password}
                   onChangeText={setPassword}
-                  secureTextEntry
+                  secureTextEntry={!showPassword}
                   style={{ color: colors.text.primary }}
                 />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                  <Ionicons 
+                    name={showPassword ? "eye-off-outline" : "eye-outline"} 
+                    size={20} 
+                    color={colors.text.secondary} 
+                  />
+                </TouchableOpacity>
               </View>
             </View>
 
@@ -145,11 +203,18 @@ export default function LoginScreen() {
               className="rounded-xl py-4 mt-8"
               style={{ backgroundColor: colors.primary }}
               onPress={handleSubmit}
+              disabled={loading}
             >
               <Text className="text-white text-center font-semibold text-lg">
-                {isLogin ? 'Нэвтрэх' : 'Бүртгүүлэх'}
+                {loading ? 'Түр хүлээнэ үү...' : (isLogin ? 'Нэвтрэх' : 'Бүртгүүлэх')}
               </Text>
             </TouchableOpacity>
+
+            {error && (
+              <Text className="text-red-500 text-center mt-2">
+                {error.message}
+              </Text>
+            )}
 
             <TouchableOpacity className="mt-4" onPress={toggleMode}>
               <Text 

@@ -12,6 +12,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const colors = isDarkMode ? theme.colors.dark : theme.colors.light;
 
   useEffect(() => {
     // Load theme preference from storage
@@ -38,8 +39,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       console.error('Error saving theme preference:', error);
     }
   };
-
-  const colors = isDarkMode ? theme.colors.dark : theme.colors.light;
 
   return (
     <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode, colors }}>
