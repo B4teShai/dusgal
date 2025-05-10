@@ -3,7 +3,7 @@ import { setContext } from '@apollo/client/link/context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const httpLink = createHttpLink({
-  uri: 'http://20.2.91.78/graphql',
+  uri: 'https://dusgal.tsolmon.hackum.com/graphql',
 });
 
 // Add authentication headers if needed
