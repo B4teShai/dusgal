@@ -7,7 +7,7 @@ import WaterUsageCard from '../../components/WaterUsageCard';
 import { useTheme } from '../../src/context/ThemeContext';
 
 export default function WaterDashboardScreen() {
-  const { colors } = useTheme();
+  const { colors, isDarkMode } = useTheme();
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
@@ -85,12 +85,13 @@ export default function WaterDashboardScreen() {
           >
             Хэрэглээний тайлан
           </Text>
-          <View className="space-y-4 mb-8">
+          <View className={`space-y-4 mb-8 rounded-3xl p-6 shadow-sm ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`} style={{ backgroundColor: colors.primary + '15' }}>
             <WaterUsageCard
               title="Угаалга"
               usage="45L"
               icon="shirt-outline"
               color={colors.accent.blue}
+              backgroundColor={colors.primary + '15'}
               percentage={37.5}
             />
             <WaterUsageCard
@@ -98,6 +99,7 @@ export default function WaterDashboardScreen() {
               usage="30L"
               icon="water-outline"
               color={colors.accent.purple}
+              backgroundColor={colors.primary + '15'}
               percentage={25}
             />
             <WaterUsageCard
@@ -105,12 +107,13 @@ export default function WaterDashboardScreen() {
               usage="15L"
               icon="nutrition-outline"
               color={colors.accent.green}
+              backgroundColor={colors.primary + '15'}
               percentage={12.5}
             />
           </View>
 
           {/* Water Saving Tips */}
-          <View className="bg-white rounded-3xl p-6 shadow-sm">
+          <View className="rounded-3xl p-6 shadow-sm" style={{ backgroundColor: colors.primary + '15' }}>
             <View className="flex-row justify-between items-center mb-4">
               <Text 
                 className="text-xl font-semibold"

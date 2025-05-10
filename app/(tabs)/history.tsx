@@ -176,7 +176,7 @@ export default function HistoryScreen() {
               className="space-x-6"
             >
               {/* Daily Usage Chart */}
-              <View className="bg-white rounded-3xl p-6 shadow-sm" style={{ width: chartWidth }}>
+              <View className="rounded-3xl p-6 shadow-sm" style={{ width: chartWidth, backgroundColor: colors.primary + '15' }}>
                 <Text 
                   className="text-lg font-semibold mb-4"
                   style={{ color: colors.text.primary }}
@@ -199,7 +199,7 @@ export default function HistoryScreen() {
               </View>
 
               {/* Category Distribution */}
-              <View className="bg-white rounded-3xl p-6 shadow-sm" style={{ width: chartWidth }}>
+              <View className="rounded-3xl p-6 shadow-sm" style={{ width: chartWidth, backgroundColor: colors.primary + '15' }}>
                 <Text 
                   className="text-lg font-semibold mb-4"
                   style={{ color: colors.text.primary }}
@@ -243,7 +243,7 @@ export default function HistoryScreen() {
           </View>
 
           {/* Usage Breakdown */}
-          <View className="bg-white rounded-3xl p-6 shadow-sm">
+          <View className="rounded-3xl p-6 shadow-sm" style={{ backgroundColor: colors.primary + '15' }}>
             <Text 
               className="text-xl font-semibold mb-4"
               style={{ color: colors.text.primary }}
