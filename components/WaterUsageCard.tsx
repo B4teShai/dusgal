@@ -1,23 +1,41 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, View } from 'react-native';
+import { commonStyles } from '../src/theme';
 
 interface WaterUsageCardProps {
   title: string;
-  value: number;
-  unit: string;
-  icon?: keyof typeof Ionicons.glyphMap;
-  color?: string;
+  usage: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  color: string;
+  percentage: number;
 }
 
-export default function WaterUsageCard({ title, value, unit, icon = 'water', color = 'blue' }: WaterUsageCardProps) {
+export default function WaterUsageCard({ title, usage, icon, color, percentage }: WaterUsageCardProps) {
   return (
-    <View className={`p-4 bg-${color}-50 rounded-xl`}>
-      <Text className={`text-lg font-semibold text-${color}-800`}>{title}</Text>
-      <View className="flex-row items-center mt-2">
-        <Ionicons name={icon} size={24} color={`#${color === 'blue' ? '1e40af' : color === 'green' ? '166534' : '7e22ce'}`} />
-        <Text className={`text-2xl font-bold text-${color}-900 ml-2`}>{value}</Text>
-        <Text className={`text-${color}-900 ml-1`}>{unit}</Text>
+    <View className={`${commonStyles.card} shadow-sm bg-white`}>
+      <View className="flex-row items-center justify-between">
+        <View className="flex-row items-center flex-1">
+          <View className="bg-sky-50 p-2 rounded-lg">
+            <Ionicons name={icon} size={24} color={color} />
+          </View>
+          <View className="ml-3 flex-1">
+            <Text className="text-slate-800 font-medium">{title}</Text>
+            <View className="flex-row items-center mt-1">
+              <View className="h-1.5 bg-slate-100 rounded-full flex-1 mr-2">
+                <View 
+                  className="h-1.5 rounded-full" 
+                  style={{ 
+                    width: `${percentage}%`,
+                    backgroundColor: color,
+                  }} 
+                />
+              </View>
+              <Text className="text-slate-500 text-sm">{percentage}%</Text>
+            </View>
+          </View>
+        </View>
+        <Text className="text-xl font-semibold text-slate-900 ml-4">{usage}</Text>
       </View>
     </View>
   );
