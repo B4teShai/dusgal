@@ -8,45 +8,24 @@ export const login = gql`
   }
 `;
 
-export const GET_DAILY_SUMMARY = gql`
-  query GetDailySummary {
-    dailySummary {
-      total
-      previousDayChange
-      monthlyTotal
+export const getMyBuilding = gql`
+  query getMyBuilding {
+    getMyBuilding {
+      _id
+      name
+      savedWater
     }
   }
-`;
+`
 
-export const GET_WATER_USAGE = gql`
-  query GetWaterUsage {
-    waterUsage {
-      id
-      type
-      amount
+export const getReport = gql`
+query getReport($startDate: Float!, $endDate: Float!) {
+  getReport(startDate: $startDate, endDate: $endDate) {
+    usedWater
+    usageRecords {
+      usedLiter
+      createdAt
     }
   }
-`;
+}`
 
-export const GET_WATER_SAVING_TIPS = gql`
-  query GetWaterSavingTips {
-    waterSavingTips {
-      id
-      title
-      description
-      icon
-      impact
-    }
-  }
-`;
-
-export const GET_NOTIFICATIONS = gql`
-  query GetNotifications {
-    notifications {
-      id
-      title
-      message
-      read
-    }
-  }
-`;

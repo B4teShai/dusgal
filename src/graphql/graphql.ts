@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -54,9 +54,9 @@ export type AddCompanyInput = {
 };
 
 export type AddUsageRecordInput = {
-  c_liter: Scalars['Float']['input'];
+  createdAt: Scalars['Float']['input'];
   deviceSecret: Scalars['String']['input'];
-  h_liter: Scalars['Float']['input'];
+  usedLiter: Scalars['Float']['input'];
 };
 
 export type AddUserInput = {
@@ -76,6 +76,7 @@ export type Building = {
   deviceSecret: Scalars['String']['output'];
   name: Scalars['String']['output'];
   owner: User;
+  savedWater: Scalars['Float']['output'];
 };
 
 export type Card = {
@@ -167,6 +168,12 @@ export enum ContentType {
   Profile = 'PROFILE'
 }
 
+export type DayReport = {
+  __typename?: 'DayReport';
+  date: Scalars['Float']['output'];
+  usedWater: Scalars['Float']['output'];
+};
+
 export type EditCardInput = {
   code?: InputMaybe<Scalars['String']['input']>;
   companyID?: InputMaybe<Scalars['ID']['input']>;
@@ -242,6 +249,7 @@ export type Mutation = {
   login: Auth;
   logout: Scalars['Boolean']['output'];
   register: Scalars['String']['output'];
+  updateSaving: Building;
   verify: Auth;
   version: Scalars['String']['output'];
 };
@@ -311,6 +319,11 @@ export type MutationRegisterArgs = {
 };
 
 
+export type MutationUpdateSavingArgs = {
+  buildingId: Scalars['ID']['input'];
+};
+
+
 export type MutationVerifyArgs = {
   code: Scalars['String']['input'];
   phoneNo: Scalars['String']['input'];
@@ -325,7 +338,8 @@ export type Query = {
   getCompanies: GetCompaniesResult;
   getCompany: Company;
   getContents: GetContentsResult;
-  getMyBuildings: Array<Building>;
+  getMyBuilding: Building;
+  getReport: ReportResult;
   getUsageRecords: Array<UsageRecord>;
   getUser: User;
   me: User;
@@ -375,13 +389,20 @@ export type QueryGetContentsArgs = {
 };
 
 
-export type QueryGetUsageRecordsArgs = {
-  buildingId: Scalars['ID']['input'];
+export type QueryGetReportArgs = {
+  endDate: Scalars['Float']['input'];
+  startDate: Scalars['Float']['input'];
 };
 
 
 export type QueryGetUserArgs = {
   _id: Scalars['ID']['input'];
+};
+
+export type ReportResult = {
+  __typename?: 'ReportResult';
+  usageRecords: Array<UsageRecord>;
+  usedWater: Scalars['Float']['output'];
 };
 
 export enum TemplateType {
@@ -397,9 +418,8 @@ export type UsageRecord = {
   __typename?: 'UsageRecord';
   _id: Scalars['ID']['output'];
   building: Building;
-  c_liter: Scalars['Float']['output'];
   createdAt: Scalars['Float']['output'];
-  h_liter: Scalars['Float']['output'];
+  usedLiter: Scalars['Float']['output'];
 };
 
 export type User = {
@@ -427,6 +447,19 @@ export type LoginMutationVariables = Exact<{
 
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Auth', token: string } };
+
+export type GetMyBuildingQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMyBuildingQuery = { __typename?: 'Query', getMyBuilding: { __typename?: 'Building', _id: string, name: string, savedWater: number } };
+
+export type GetReportQueryVariables = Exact<{
+  startDate: Scalars['Float']['input'];
+  endDate: Scalars['Float']['input'];
+}>;
+
+
+export type GetReportQuery = { __typename?: 'Query', getReport: { __typename?: 'ReportResult', usedWater: number, usageRecords: Array<{ __typename?: 'UsageRecord', usedLiter: number, createdAt: number }> } };
 
 
 export const LoginDocument = gql`
@@ -463,3 +496,89 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const GetMyBuildingDocument = gql`
+    query getMyBuilding {
+  getMyBuilding {
+    _id
+    name
+    savedWater
+  }
+}
+    `;
+
+/**
+ * __useGetMyBuildingQuery__
+ *
+ * To run a query within a React component, call `useGetMyBuildingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyBuildingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyBuildingQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMyBuildingQuery(baseOptions?: Apollo.QueryHookOptions<GetMyBuildingQuery, GetMyBuildingQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMyBuildingQuery, GetMyBuildingQueryVariables>(GetMyBuildingDocument, options);
+      }
+export function useGetMyBuildingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMyBuildingQuery, GetMyBuildingQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMyBuildingQuery, GetMyBuildingQueryVariables>(GetMyBuildingDocument, options);
+        }
+export function useGetMyBuildingSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetMyBuildingQuery, GetMyBuildingQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetMyBuildingQuery, GetMyBuildingQueryVariables>(GetMyBuildingDocument, options);
+        }
+export type GetMyBuildingQueryHookResult = ReturnType<typeof useGetMyBuildingQuery>;
+export type GetMyBuildingLazyQueryHookResult = ReturnType<typeof useGetMyBuildingLazyQuery>;
+export type GetMyBuildingSuspenseQueryHookResult = ReturnType<typeof useGetMyBuildingSuspenseQuery>;
+export type GetMyBuildingQueryResult = Apollo.QueryResult<GetMyBuildingQuery, GetMyBuildingQueryVariables>;
+export const GetReportDocument = gql`
+    query getReport($startDate: Float!, $endDate: Float!) {
+  getReport(startDate: $startDate, endDate: $endDate) {
+    usedWater
+    usageRecords {
+      usedLiter
+      createdAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetReportQuery__
+ *
+ * To run a query within a React component, call `useGetReportQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetReportQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetReportQuery({
+ *   variables: {
+ *      startDate: // value for 'startDate'
+ *      endDate: // value for 'endDate'
+ *   },
+ * });
+ */
+export function useGetReportQuery(baseOptions: Apollo.QueryHookOptions<GetReportQuery, GetReportQueryVariables> & ({ variables: GetReportQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetReportQuery, GetReportQueryVariables>(GetReportDocument, options);
+      }
+export function useGetReportLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetReportQuery, GetReportQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetReportQuery, GetReportQueryVariables>(GetReportDocument, options);
+        }
+export function useGetReportSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetReportQuery, GetReportQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetReportQuery, GetReportQueryVariables>(GetReportDocument, options);
+        }
+export type GetReportQueryHookResult = ReturnType<typeof useGetReportQuery>;
+export type GetReportLazyQueryHookResult = ReturnType<typeof useGetReportLazyQuery>;
+export type GetReportSuspenseQueryHookResult = ReturnType<typeof useGetReportSuspenseQuery>;
+export type GetReportQueryResult = Apollo.QueryResult<GetReportQuery, GetReportQueryVariables>;

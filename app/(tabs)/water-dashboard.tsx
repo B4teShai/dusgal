@@ -1,3 +1,4 @@
+import { useGetReportQuery } from '@/src/graphql/graphql';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
@@ -7,15 +8,19 @@ import { useTheme } from '../../src/context/ThemeContext';
 
 // Static data for water usage
 const STATIC_WATER_DATA = {
-  normalUsage: 100, 
+  normalUsage: 140, 
 };
 
 export default function WaterDashboardScreen() {
   const { colors, isDarkMode } = useTheme();
-  const [currentUsage, setCurrentUsage] = useState(70); 
   const [isError, setIsError] = useState(false);
   const [showTipsModal, setShowTipsModal] = useState(false);
+  const now = new Date();
 
+const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+const tomorrowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const {data, error} = useGetReportQuery({variables: {startDate: todayMidnight.getTime(), endDate: tomorrowMidnight.getTime()}, pollInterval: 2000});
+  console.log(data, error);
   // Update current usage every minute
   useEffect(() => {
     
@@ -45,7 +50,7 @@ export default function WaterDashboardScreen() {
       {/* Water Wave Animation */}
       <View className="mb-4 h-full" style={{ backgroundColor: colors.background }}>
         <SkiaWaterWave
-          currentUsage={currentUsage}
+          currentUsage={data?.getReport.usedWater || 0}
           normalUsage={STATIC_WATER_DATA.normalUsage}
         />
       </View>

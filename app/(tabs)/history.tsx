@@ -4,9 +4,10 @@ import { BarChart, LineChart, PieChart } from 'react-native-chart-kit';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../src/context/ThemeContext';
 
-const timeRanges = ['Өнөөдөр', '7 хоног', '30 хоног', '3 сар'];
+const timeRanges = [ '7 хоног', '30 хоног', '3 сар'];
 const { width } = Dimensions.get('window');
 const chartWidth = width - 48;
+
 
 const mockData = {
   dailyUsage: {
@@ -60,7 +61,7 @@ const mockData = {
 export default function HistoryScreen() {
   const { colors } = useTheme();
   const [selectedRange, setSelectedRange] = useState('7 хоног');
-
+ 
   const chartConfig = {
     backgroundGradientFrom: colors.background,
     backgroundGradientTo: colors.background,
