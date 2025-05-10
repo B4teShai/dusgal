@@ -1,3 +1,4 @@
+import { useGetReportQuery } from '@/src/graphql/graphql';
 import React, { useState } from 'react';
 import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { BarChart, LineChart, PieChart } from 'react-native-chart-kit';
@@ -7,6 +8,7 @@ import { useTheme } from '../../src/context/ThemeContext';
 const timeRanges = [ '7 хоног', '30 хоног', '3 сар'];
 const { width } = Dimensions.get('window');
 const chartWidth = width - 48;
+
 
 
 const mockData = {
@@ -61,7 +63,12 @@ const mockData = {
 export default function HistoryScreen() {
   const { colors } = useTheme();
   const [selectedRange, setSelectedRange] = useState('7 хоног');
- 
+
+ const now = new Date();
+ const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+ const sevenDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+  const {data} = useGetReportQuery({variables: {startDate: sevenDaysAgo.getTime(), endDate: todayMidnight.getTime()},  pollInterval: 2000});
+  const SevenDay = {data};
   const chartConfig = {
     backgroundGradientFrom: colors.background,
     backgroundGradientTo: colors.background,
@@ -78,7 +85,7 @@ export default function HistoryScreen() {
         <View className="px-6 py-8">
           {/* Header */}
           <View className="mb-8">
-            <Text 
+            <Text
               className="text-3xl font-bold mb-2"
               style={{ color: colors.text.primary }}
             >
@@ -87,8 +94,8 @@ export default function HistoryScreen() {
           </View>
 
           {/* Time Range Selector */}
-          <ScrollView 
-            horizontal 
+          <ScrollView
+            horizontal
             showsHorizontalScrollIndicator={false}
             className="mb-8"
           >
@@ -98,8 +105,8 @@ export default function HistoryScreen() {
                   key={range}
                   onPress={() => setSelectedRange(range)}
                   className={`px-4 py-2 rounded-full ${
-                    selectedRange === range 
-                      ? 'bg-[#0ea5e915]' 
+                    selectedRange === range
+                      ? 'bg-[#0ea5e915]'
                       : 'bg-gray-100'
                   }`}
                 >
@@ -118,37 +125,41 @@ export default function HistoryScreen() {
           </ScrollView>
 
           {/* Usage Summary Card */}
-          <View 
+          <View
             className="p-6 rounded-3xl mb-8"
             style={{ backgroundColor: colors.primary + '15' }}
           >
             <View className="flex-row justify-between items-center mb-4">
               <View>
-                <Text 
+                <Text
                   className="text-lg font-semibold mb-1"
                   style={{ color: colors.text.primary }}
                 >
                   Дундаж хэрэглээ
                 </Text>
-                <Text 
+                <Text
                   className="text-3xl font-bold"
                   style={{ color: colors.primary }}
                 >
-                  145L
+                  {selectedRange === '7 хоног' && SevenDay.data?.getReport?.usedWater
+                    ? Math.round(SevenDay.data.getReport.usedWater / 7)
+                    : 145}L
                 </Text>
               </View>
               <View className="items-end">
-                <Text 
+                <Text
                   className="text-lg font-semibold mb-1"
                   style={{ color: colors.text.primary }}
                 >
                   Нийт хэрэглээ
                 </Text>
-                <Text 
+                <Text
                   className="text-3xl font-bold"
                   style={{ color: colors.primary }}
                 >
-                  1,015L
+                  {selectedRange === '7 хоног' && SevenDay.data?.getReport?.usedWater
+                    ? Math.round(SevenDay.data.getReport.usedWater)
+                    : 1015}L
                 </Text>
               </View>
             </View>
@@ -156,14 +167,14 @@ export default function HistoryScreen() {
 
           {/* Charts Section */}
           <View className="mb-8">
-            <Text 
+            <Text
               className="text-xl font-semibold mb-4"
               style={{ color: colors.text.primary }}
             >
               Графикууд
             </Text>
-            <ScrollView 
-              horizontal 
+            <ScrollView
+              horizontal
               showsHorizontalScrollIndicator={false}
               pagingEnabled
               snapToInterval={chartWidth + 24}
@@ -172,7 +183,7 @@ export default function HistoryScreen() {
             >
               {/* Daily Usage Chart */}
               <View className="rounded-3xl p-6 shadow-sm" style={{ width: chartWidth, backgroundColor: colors.primary + '15' }}>
-                <Text 
+                <Text
                   className="text-lg font-semibold mb-4"
                   style={{ color: colors.text.primary }}
                 >
@@ -195,7 +206,7 @@ export default function HistoryScreen() {
 
               {/* Category Distribution */}
               <View className="rounded-3xl p-6 shadow-sm" style={{ width: chartWidth, backgroundColor: colors.primary + '15' }}>
-                <Text 
+                <Text
                   className="text-lg font-semibold mb-4"
                   style={{ color: colors.text.primary }}
                 >
@@ -215,7 +226,7 @@ export default function HistoryScreen() {
 
               {/* Hourly Usage */}
               <View className="bg-white rounded-3xl p-6 shadow-sm" style={{ width: chartWidth }}>
-                <Text 
+                <Text
                   className="text-lg font-semibold mb-4"
                   style={{ color: colors.text.primary }}
                 >
@@ -239,13 +250,13 @@ export default function HistoryScreen() {
 
           {/* Usage Breakdown */}
           <View className="rounded-3xl p-6 shadow-sm" style={{ backgroundColor: colors.primary + '15' }}>
-            <Text 
+            <Text
               className="text-xl font-semibold mb-4"
               style={{ color: colors.text.primary }}
             >
               Хэрэглээний тайлан
             </Text>
-            
+
             {/* Usage Categories */}
             <View className="space-y-4">
               {[
@@ -260,11 +271,11 @@ export default function HistoryScreen() {
                     <Text style={{ color: colors.text.primary }}>{item.usage}</Text>
                   </View>
                   <View className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <View 
+                    <View
                       className="h-full rounded-full"
-                      style={{ 
+                      style={{
                         width: `${item.percentage}%`,
-                        backgroundColor: colors.primary 
+                        backgroundColor: colors.primary
                       }}
                     />
                   </View>
@@ -276,4 +287,4 @@ export default function HistoryScreen() {
       </ScrollView>
     </SafeAreaView>
   );
-} 
+}
