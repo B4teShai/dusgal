@@ -4,7 +4,6 @@ import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Animated, Dimensions, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { commonStyles } from '../src/theme';
 
 const { width } = Dimensions.get('window');
 
@@ -28,15 +27,25 @@ const onboardingData = [
 
 export default function SplashScreen() {
   const [currentPage, setCurrentPage] = useState(0);
+  const { colors, isDarkMode } = useTheme();
   const scrollX = new Animated.Value(0);
   const fadeAnimation = new Animated.Value(0);
+  const scaleAnimation = new Animated.Value(0.8);
 
   useEffect(() => {
-    Animated.timing(fadeAnimation, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
+    Animated.parallel([
+      Animated.timing(fadeAnimation, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnimation, {
+        toValue: 1,
+        tension: 20,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+    ]).start();
   }, []);
 
   const handleNext = () => {
@@ -50,35 +59,40 @@ export default function SplashScreen() {
   const handleSkip = () => {
     router.replace('/login');
   };
-
-  const { colors } = useTheme();
   
   return (
-    <SafeAreaView className={commonStyles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <View className="flex-1">
         <View className="flex-row justify-end px-6 pt-4">
           <TouchableOpacity onPress={handleSkip}>
-            <Text className={commonStyles.text.link}>Алгасах</Text>
+            <Text style={{ color: colors.primary }} className="text-base font-medium">
+              Алгасах
+            </Text>
           </TouchableOpacity>
         </View>
 
         <Animated.View 
           className="flex-1 items-center justify-center px-6"
-          style={{ opacity: fadeAnimation }}
+          style={{ 
+            opacity: fadeAnimation,
+            transform: [{ scale: scaleAnimation }]
+          }}
         >
           <View className="items-center mb-12">
-            <Ionicons 
-              name={onboardingData[currentPage].icon as any} 
-              size={140} 
-              color={colors.primary} 
-            />
+            <View style={{ backgroundColor: colors.primary + '15' }} className="p-8 rounded-full">
+              <Ionicons 
+                name={onboardingData[currentPage].icon as any} 
+                size={140} 
+                color={colors.primary} 
+              />
+            </View>
           </View>
           
           <View className="items-center">
-            <Text className={`${commonStyles.text.title} text-center mb-4`}>
+            <Text style={{ color: colors.text.primary }} className="text-4xl font-bold text-center mb-4">
               {onboardingData[currentPage].title}
             </Text>
-            <Text className={`${commonStyles.text.subtitle} text-center`}>
+            <Text style={{ color: colors.text.secondary }} className="text-lg text-center">
               {onboardingData[currentPage].subtitle}
             </Text>
           </View>
@@ -87,18 +101,21 @@ export default function SplashScreen() {
             {onboardingData.map((_, index) => (
               <View
                 key={index}
-                className={`h-2 w-2 rounded-full mx-1 ${
-                  currentPage === index ? 'bg-primary' : 'bg-gray-300'
-                }`}
+                style={{ 
+                  backgroundColor: currentPage === index ? colors.primary : colors.border,
+                  width: currentPage === index ? 20 : 8,
+                }}
+                className="h-2 rounded-full mx-1 transition-all duration-300"
               />
             ))}
           </View>
 
           <TouchableOpacity
-            className={`${commonStyles.button.primary} w-full shadow-lg`}
+            style={{ backgroundColor: colors.primary }}
+            className="w-full py-4 rounded-xl shadow-lg"
             onPress={handleNext}
           >
-            <Text className={commonStyles.button.text.primary}>
+            <Text style={{ color: '#ffffff' }} className="text-center font-semibold text-lg">
               {currentPage === onboardingData.length - 1 ? 'Эхлэх' : 'Үргэлжлүүлэх'}
             </Text>
           </TouchableOpacity>

@@ -88,7 +88,7 @@ export default function SettingsScreen() {
           </View>
 
           {/* Profile Section */}
-          <View className="bg-white rounded-3xl p-6 shadow-sm mb-8">
+          <View className="rounded-3xl p-6 shadow-sm mb-8" style={{ backgroundColor: colors.primary + '15' }}>
             <View className="items-center mb-6">
               <View 
                 className="w-24 h-24 rounded-full items-center justify-center mb-4"
@@ -125,7 +125,7 @@ export default function SettingsScreen() {
           </View>
 
           {/* Preferences Section */}
-          <View className="bg-white rounded-3xl p-6 shadow-sm mb-8">
+          <View className="rounded-3xl p-6 shadow-sm mb-8" style={{ backgroundColor: colors.primary + '15' }}>
             <Text 
               className="text-xl font-semibold mb-4"
               style={{ color: colors.text.primary }}
@@ -174,7 +174,7 @@ export default function SettingsScreen() {
           </View>
 
           {/* App Settings Section */}
-          <View className="bg-white rounded-3xl p-6 shadow-sm mb-8">
+          <View className="rounded-3xl p-6 shadow-sm mb-8" style={{ backgroundColor: colors.primary + '15' }}>
             <Text 
               className="text-xl font-semibold mb-4"
               style={{ color: colors.text.primary }}

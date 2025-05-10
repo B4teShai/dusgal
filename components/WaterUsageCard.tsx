@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, View } from 'react-native';
+import { useTheme } from '../src/context/ThemeContext';
 import { commonStyles } from '../src/theme';
 
 interface WaterUsageCardProps {
@@ -9,20 +10,23 @@ interface WaterUsageCardProps {
   icon: keyof typeof Ionicons.glyphMap;
   color: string;
   percentage: number;
+  backgroundColor?: string;
 }
 
-export default function WaterUsageCard({ title, usage, icon, color, percentage }: WaterUsageCardProps) {
+export default function WaterUsageCard({ title, usage, icon, color, percentage, backgroundColor }: WaterUsageCardProps) {
+  const { colors } = useTheme();
+  
   return (
-    <View className={`${commonStyles.card} shadow-sm bg-white`}>
+    <View className={`${commonStyles.card} shadow-sm`} style={{ backgroundColor: backgroundColor || colors.surface }}>
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center flex-1">
-          <View className="bg-sky-50 p-2 rounded-lg">
+          <View style={{ backgroundColor: color + '15' }} className="p-2 rounded-lg">
             <Ionicons name={icon} size={24} color={color} />
           </View>
           <View className="ml-3 flex-1">
-            <Text className="text-slate-800 font-medium">{title}</Text>
+            <Text style={{ color: colors.text.primary }} className="font-medium">{title}</Text>
             <View className="flex-row items-center mt-1">
-              <View className="h-1.5 bg-slate-100 rounded-full flex-1 mr-2">
+              <View style={{ backgroundColor: colors.border }} className="h-1.5 rounded-full flex-1 mr-2">
                 <View 
                   className="h-1.5 rounded-full" 
                   style={{ 
@@ -31,11 +35,11 @@ export default function WaterUsageCard({ title, usage, icon, color, percentage }
                   }} 
                 />
               </View>
-              <Text className="text-slate-500 text-sm">{percentage}%</Text>
+              <Text style={{ color: colors.text.secondary }} className="text-sm">{percentage}%</Text>
             </View>
           </View>
         </View>
-        <Text className="text-xl font-semibold text-slate-900 ml-4">{usage}</Text>
+        <Text style={{ color: colors.text.primary }} className="text-xl font-semibold ml-4">{usage}</Text>
       </View>
     </View>
   );
