@@ -18,6 +18,7 @@ export const theme = {
         blue: '#3b82f6', // Blue 500
         purple: '#8b5cf6', // Violet 500
         green: '#10b981', // Emerald 500
+        brown: '#8B4513',
       },
       opacity: {
         primary: '#0ea5e915',

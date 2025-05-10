@@ -1,21 +1,21 @@
 import { useLoginMutation } from '@/src/graphql/graphql';
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '../src/context/AuthContext';
 import { useTheme } from '../src/context/ThemeContext';
-
 
 export default function LoginScreen() {
   const { colors, isDarkMode } = useTheme();
+  const { login } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [phoneNo, setPhoneNo] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [login, { loading, error }] = useLoginMutation();
+  const [loginMutation, { loading, error }] = useLoginMutation();
+
   const handleSubmit = async () => {
     try {
       if (isLogin) {
@@ -24,9 +24,7 @@ export default function LoginScreen() {
           return;
         }
 
-        // Login logic using GraphQL mutation
-        console.log('Attempting login with:', { phoneNo, password });
-        const response = await login({
+        const response = await loginMutation({
           variables: {
             phoneNo,
             password
@@ -42,12 +40,9 @@ export default function LoginScreen() {
           throw error;
         });
 
-        console.log('Login response:', response);
-
         if (response.data?.login) {
           const { token } = response.data.login;
-          await AsyncStorage.setItem('token', token);
-          router.replace('/(tabs)/water-dashboard');
+          await login(token);
         } else {
           Alert.alert('Алдаа', 'Утасны дугаар эсвэл нууц үг буруу байна');
         }
@@ -140,7 +135,7 @@ export default function LoginScreen() {
                 className="mb-2 font-medium"
                 style={{ color: colors.text.primary }}
               >
-                И-мэйл
+                Утасны дугаар
               </Text>
               <View 
                 className="flex-row items-center rounded-xl px-4 py-3"
