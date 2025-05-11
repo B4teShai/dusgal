@@ -195,7 +195,7 @@ const WaterDashboardScreen = () => {
       <WaterSavingCertificate
         visible={showTipsModal}
         onClose={() => setShowTipsModal(false)}
-        savedAmount={13000}
+        savedAmount={12500}
         startDate={new Date(2024, 0, 1)} // Example start date
       />
     </SafeAreaView>

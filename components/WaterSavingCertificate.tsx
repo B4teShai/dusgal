@@ -28,7 +28,7 @@ export default function WaterSavingCertificate({
 
   // Add tier calculation
   const getTier = (amount: number) => {
-    if (amount < 1000) return { name: 'Newbie', icon: '🌱', video: require('../public/video/fish1.mov') };
+    if (amount < 1000) return { name: 'Newbie', icon: '🌱', video: require('../public/video/fish3.mov') };
     if (amount < 10000) return { name: 'Eco Hero', icon: '🌊', video: require('../public/video/fish2.mov') };
     return { name: 'Water Legend', icon: '👑', video: require('../public/video/fish1.mov') };
   };

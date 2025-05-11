@@ -36,6 +36,11 @@ const formatTime = (timestamp: number) => {
   }
 };
 
+const formatDate = (timestamp: number) => {
+  const date = new Date(timestamp);
+  return `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}-${date.getDate().toString().padStart(2,'0')} ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
+};
+
 const getNotificationColor = (type: Notification['type']) => {
   switch (type) {
     case 'warning':
@@ -262,7 +267,7 @@ export default function NotificationModal({
                 </Text>
               </View>
             ) : (
-              notifications.map((notification) => {
+              notifications.reverse().map((notification) => {
                 const notificationColor = getNotificationColor(notification.type);
                 return (
                   <TouchableOpacity
@@ -289,12 +294,15 @@ export default function NotificationModal({
                         )}
                       </View>
                       <View className="flex-1">
+                        <Text className="text-xs mb-0.5" style={{ color: colors.text.secondary }}>
+                          {formatTime(notification.timestamp)}
+                        </Text>
                         <Text className="text-base font-medium mb-0.5" 
                           style={{ color: colors.text.primary }}>
                           {notification.title}
                         </Text>
-                        <Text className="text-xs" style={{ color: colors.text.secondary }}>
-                          {formatTime(notification.timestamp)}
+                        <Text className="text-xs mt-1" style={{ color: colors.text.secondary }}>
+                          {formatDate(notification.timestamp)}
                         </Text>
                       </View>
                     </View>
