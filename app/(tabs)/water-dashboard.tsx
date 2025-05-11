@@ -83,12 +83,14 @@ const WaterDashboardScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       {/* Notification Button */}
+      
       <TouchableOpacity 
-        className="absolute top-20 right-20 z-10 p-2 rounded-full"
+        className="absolute top-20 right-20 z-10 p-2 rounded-full size-5 shadow-md"
         style={{ backgroundColor: colors.surface }}
         onPress={() => setShowNotifications(true)}
       >
-        <View>
+      
+        <View >
           <Ionicons name="notifications" size={24} color={colors.accent.blue}/>
           {unreadCount > 0 && (
             <View className="absolute -top-1 -right-1 bg-red-500 rounded-full w-5 h-5 items-center justify-center">
@@ -100,13 +102,13 @@ const WaterDashboardScreen = () => {
 
       {/* Water Button */}
       <TouchableOpacity 
-        className="absolute top-20 right-4 z-10 p-2 rounded-full"
+        className="absolute top-20 right-4 z-10 p-2 rounded-full shadow-md"
         style={{ backgroundColor: colors.surface }}
         onPress={() => setShowTipsModal(true)}
       >
         <Ionicons name="water" size={48} color={colors.accent.blue}/>
       </TouchableOpacity>
-
+     
       {/* Water Wave Animation */}
       <View className="mb-4 h-full" style={{ backgroundColor: colors.background }}>
         <SkiaWaterWave

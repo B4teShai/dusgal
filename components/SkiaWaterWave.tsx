@@ -248,12 +248,16 @@ export default function SkiaWaterWave({ currentUsage, normalUsage }: SkiaWaterWa
       </View>
       {/* Normal usage indicator line */}
       <View
+        
         style={[
           styles.normalLine,
           {
             bottom: `${(normalUsage / maxUsage) * 100}%`,
             backgroundColor: currentUsage >= normalUsage ? 'white' : colors.primary,
-            width: 100,
+            width: 500,
+            borderStyle: 'dashed',
+             borderWidth: 3,
+            borderColor: currentUsage >= normalUsage ? colors.primary : 'white',
           },
         ]}
       />
