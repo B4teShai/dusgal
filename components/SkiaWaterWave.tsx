@@ -256,8 +256,8 @@ export default function SkiaWaterWave({ currentUsage, normalUsage }: SkiaWaterWa
             backgroundColor: currentUsage >= normalUsage ? 'white' : colors.primary,
             width: 500,
             borderStyle: 'dashed',
-             borderWidth: 3,
-            borderColor: currentUsage >= normalUsage ? colors.primary : 'white',
+            borderWidth: 3,
+            
           },
         ]}
       />

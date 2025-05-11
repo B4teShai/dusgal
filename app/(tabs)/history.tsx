@@ -271,7 +271,7 @@ export default function HistoryScreen() {
               </View>
 
               {/* Hourly Usage */}
-              <View className="bg-white rounded-3xl p-6 shadow-sm" style={{ width: chartWidth }}>
+              <View className="bg-white rounded-3xl p-6 shadow-sm" style={{ width: chartWidth, backgroundColor: colors.primary + '15'  }}>
                 <Text
                   className="text-lg font-semibold mb-4"
                   style={{ color: colors.text.primary }}
