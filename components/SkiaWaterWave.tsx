@@ -1,10 +1,10 @@
 import {
-    Canvas,
-    Path,
-    Skia
+  Canvas,
+  Path,
+  Skia
 } from '@shopify/react-native-skia';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Animated, Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../src/context/ThemeContext';
 
 interface SkiaWaterWaveProps {
@@ -17,6 +17,10 @@ export default function SkiaWaterWave({ currentUsage, normalUsage }: SkiaWaterWa
   const [phase1, setPhase1] = useState(0);
   const [phase2, setPhase2] = useState(0);
   const [phase3, setPhase3] = useState(0);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const scaleAnim = React.useRef(new Animated.Value(0.8)).current;
   const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
   const width = Math.max(screenWidth, 1);
   const height = Math.max(screenHeight, 1);
@@ -93,8 +97,57 @@ export default function SkiaWaterWave({ currentUsage, normalUsage }: SkiaWaterWa
   const path2 = createWavePath(phase2, 8, 3, 5);      // Medium amplitude, medium frequency
   const path3 = createWavePath(phase3, 5, 4.5, 10);    // Smaller amplitude, faster frequency
 
+  const showTooltipWithAnimation = (x: number, y: number) => {
+    // Only show tooltip if the press is within the wave area
+    const waveY = height - (height * calculateWaveHeight()) / 100;
+    if (y >= waveY) {
+      // Adjust position to keep tooltip within bounds
+      const adjustedX = Math.min(Math.max(x, 100), width - 100);
+      const adjustedY = Math.min(Math.max(y, 100), height - 100);
+      
+      setTooltipPosition({ x: adjustedX, y: adjustedY });
+      setShowTooltip(true);
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          friction: 8,
+          tension: 40,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  };
+
+  const hideTooltipWithAnimation = () => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 0.8,
+        friction: 8,
+        tension: 40,
+        useNativeDriver: true,
+      }),
+    ]).start(() => setShowTooltip(false));
+  };
+
   return (
-    <View style={[styles.container, { height }, { backgroundColor: colors.background }]}>
+    <Pressable 
+      style={[styles.container, { height }, { backgroundColor: colors.background }]}
+      onLongPress={(event) => {
+        const { locationX, locationY } = event.nativeEvent;
+        showTooltipWithAnimation(locationX, locationY);
+      }}
+      onPressOut={hideTooltipWithAnimation}
+    >
       <Canvas style={StyleSheet.absoluteFill}>
         <Path
           path={path3}
@@ -112,6 +165,64 @@ export default function SkiaWaterWave({ currentUsage, normalUsage }: SkiaWaterWa
           style="fill"
         />
       </Canvas>
+
+      {showTooltip && (
+        <Animated.View 
+          style={[
+            styles.tooltip, 
+            { 
+              backgroundColor: colors.surface,
+              left: tooltipPosition.x,
+              top: tooltipPosition.y,
+              transform: [
+                { translateX: -110 },
+                { translateY: -60 },
+                { scale: scaleAnim }
+              ],
+              opacity: fadeAnim,
+              borderWidth: 2,
+              borderColor: currentUsage > normalUsage ? '#FF4444' : colors.primary,
+            }
+          ]}
+        >
+          <View style={[
+            styles.tooltipContent,
+            { backgroundColor: currentUsage > normalUsage ? 'rgba(255, 68, 68, 0.1)' : 'rgba(255, 255, 255, 0.95)' }
+          ]}>
+            <Text style={[
+              styles.tooltipTitle, 
+              { color: currentUsage > normalUsage ? '#FF4444' : colors.text.primary }
+            ]}>
+              {currentUsage > normalUsage ? '⚠️ Усны хэрэглээ их байна!' : 'Усны хэрэглээ'}
+            </Text>
+            <View style={styles.tooltipRow}>
+              <Text style={[styles.tooltipLabel, { color: colors.text.secondary }]}>
+                Одоогийн хэрэглээ:
+              </Text>
+              <Text style={[
+                styles.tooltipValue, 
+                { color: currentUsage > normalUsage ? '#FF4444' : colors.text.primary }
+              ]}>
+                {currentUsage}Л
+              </Text>
+            </View>
+            <View style={styles.tooltipRow}>
+              <Text style={[styles.tooltipLabel, { color: colors.text.secondary }]}>
+                Хэвийн хэрэглээ:
+              </Text>
+              <Text style={[styles.tooltipValue, { color: colors.text.primary }]}>
+                {normalUsage}Л
+              </Text>
+            </View>
+            {currentUsage > normalUsage && (
+              <Text style={[styles.warningText, { color: '#FF4444' }]}>
+                Хэвийн хэрэглээнээс {(currentUsage - normalUsage).toFixed(1)}Л илүү
+              </Text>
+            )}
+          </View>
+        </Animated.View>
+      )}
+
       {/* Measurement scale */}
       <View style={styles.scaleContainer}>
         {[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1].reverse().map((multiplier) => {
@@ -146,7 +257,7 @@ export default function SkiaWaterWave({ currentUsage, normalUsage }: SkiaWaterWa
           },
         ]}
       />
-    </View>
+    </Pressable>
   );
 }
 
@@ -218,5 +329,55 @@ const styles = StyleSheet.create({
   scaleTextMajor: {
     fontSize: 10,
     fontWeight: '500',
+  },
+  tooltip: {
+    position: 'absolute',
+    padding: 16,
+    borderRadius: 16,
+    width: 220,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+    zIndex: 10,
+  },
+  tooltipContent: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 12,
+    padding: 5,
+  },
+  tooltipTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  tooltipRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+    paddingVertical: 4,
+  },
+  tooltipLabel: {
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  tooltipValue: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  warningText: {
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginTop: 8,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 68, 68, 0.3)',
   },
 });

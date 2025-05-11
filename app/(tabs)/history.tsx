@@ -1,9 +1,12 @@
 import { useGetReportQuery } from '@/src/graphql/graphql';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { BarChart, LineChart, PieChart } from 'react-native-chart-kit';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../src/context/ThemeContext';
+import SubscriptionModal from '../subscription';
 
 const timeRanges = [ '7 хоног', '30 хоног', '3 сар'];
 const { width } = Dimensions.get('window');
@@ -63,6 +66,9 @@ const mockData = {
 export default function HistoryScreen() {
   const { colors } = useTheme();
   const [selectedRange, setSelectedRange] = useState('7 хоног');
+  const [subscriptionType, setSubscriptionType] = useState<'pro' | 'free'>('pro');
+  const [showSubscription, setShowSubscription] = useState(false);
+  const router = useRouter();
 
  const now = new Date();
  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -85,12 +91,52 @@ export default function HistoryScreen() {
         <View className="px-6 py-8">
           {/* Header */}
           <View className="mb-8">
-            <Text
-              className="text-3xl font-bold mb-2"
-              style={{ color: colors.text.primary }}
-            >
-              Түүх
-            </Text>
+            <View className="flex-row justify-between items-center">
+              <Text
+                className="text-3xl font-bold mb-2"
+                style={{ color: colors.text.primary }}
+              >
+                Түүх
+              </Text>
+              <TouchableOpacity 
+                className={`px-2 py-1 rounded-full flex-row items-center space-x-3 ${
+                  subscriptionType === 'pro' 
+                    ? 'bg-[#0ea5e915] border border-[#0ea5e9]' 
+                    : 'bg-gray-100 border border-gray-200'
+                }`}
+                onPress={() => setShowSubscription(true)}
+                activeOpacity={0.7}
+              >
+                <View className={`p-2 rounded-full ${
+                  subscriptionType === 'pro' 
+                    ? 'bg-[#0ea5e9]' 
+                    : 'bg-gray-200'
+                }`}>
+                  <Ionicons 
+                    name={subscriptionType === 'pro' ? 'star' : 'water'} 
+                    size={14} 
+                    color={subscriptionType === 'pro' ? 'white' : colors.text.secondary} 
+                  />
+                </View>
+                <Text
+                  className={`font-semibold text-base ${
+                    subscriptionType === 'pro' ? 'text-[#0ea5e9]' : 'text-gray-600'
+                  }`}
+                >
+                  {subscriptionType === 'pro' ? 'Pro' : 'Free'}
+                </Text>
+                <Ionicons 
+                  name="chevron-forward" 
+                  size={16} 
+                  color={subscriptionType === 'pro' ? colors.primary : colors.text.secondary} 
+                />
+              </TouchableOpacity>
+            </View>
+            {subscriptionType === 'free' && (
+              <Text className="text-sm text-gray-500 mt-2">
+                Upgrade to Pro for detailed usage analysis and personalized insights
+              </Text>
+            )}
           </View>
 
           {/* Time Range Selector */}
@@ -285,6 +331,12 @@ export default function HistoryScreen() {
           </View>
         </View>
       </ScrollView>
+
+      <SubscriptionModal 
+        visible={showSubscription}
+        onClose={() => setShowSubscription(false)}
+        currentSubscription={subscriptionType}
+      />
     </SafeAreaView>
   );
 }

@@ -1,9 +1,11 @@
 import { useGetReportQuery } from '@/src/graphql/graphql';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import { Modal, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import NotificationModal, { Notification } from '../../components/NotificationModal';
 import SkiaWaterWave from '../../components/SkiaWaterWave';
+import WaterSavingCertificate from '../../components/WaterSavingCertificate';
 import { useTheme } from '../../src/context/ThemeContext';
 
 // Static data for water usage
@@ -11,20 +13,62 @@ const STATIC_WATER_DATA = {
   normalUsage: 140, 
 };
 
-export default function WaterDashboardScreen() {
-  const { colors, isDarkMode } = useTheme();
+// Example notifications (this would come from your API)
+const exampleNotifications: Notification[] = [
+  {
+    id: '1',
+    title: 'Усны хэрэглээ их байна',
+    message: 'Таны усны хэрэглээ хэвийн хэмжээнээс 20% илүү байна.',
+    type: 'warning',
+    timestamp: Date.now() - 3600000, // 1 hour ago
+    read: false
+  },
+  {
+    id: '2',
+    title: 'Ус хадгалсан',
+    message: 'Та энэ долоо хоногт 500Л ус хадгалсан байна.',
+    type: 'success',
+    timestamp: Date.now() - 86400000, // 1 day ago
+    read: true
+  },
+  {
+    id: '3',
+    title: 'Шинэ зөвлөмж',
+    message: 'Ус хадгалах 5 зөвлөмж',
+    type: 'info',
+    timestamp: Date.now() - 172800000, // 2 days ago
+    read: true
+  }
+];
+
+const WaterDashboardScreen = () => {
+  const { colors } = useTheme();
   const [isError, setIsError] = useState(false);
-  const [showTipsModal, setShowTipsModal] = useState(false);
+  const [showTipsModal, setShowTipsModal] = useState(true);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>(exampleNotifications);
   const now = new Date();
 
-const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-const tomorrowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const tomorrowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
   const {data, error} = useGetReportQuery({variables: {startDate: todayMidnight.getTime(), endDate: tomorrowMidnight.getTime()}, pollInterval: 2000});
-  console.log(data, error);
-  // Update current usage every minute
+
+  // Show modal when component mounts
   useEffect(() => {
-    
+    setShowTipsModal(true);
   }, []);
+
+  // Mark notification as read
+  const markAsRead = (id: string) => {
+    setNotifications(prev => 
+      prev.map(notif => 
+        notif.id === id ? { ...notif, read: true } : notif
+      )
+    );
+  };
+
+  // Get unread count
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   if (isError) {
     return (
@@ -38,90 +82,56 @@ const tomorrowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-      {/* Star Button */}
+      {/* Notification Button */}
+      <TouchableOpacity 
+        className="absolute top-20 right-20 z-10 p-2 rounded-full"
+        style={{ backgroundColor: colors.surface }}
+        onPress={() => setShowNotifications(true)}
+      >
+        <View>
+          <Ionicons name="notifications" size={24} color={colors.accent.blue}/>
+          {unreadCount > 0 && (
+            <View className="absolute -top-1 -right-1 bg-red-500 rounded-full w-5 h-5 items-center justify-center">
+              <Text className="text-white text-xs">{unreadCount}</Text>
+            </View>
+          )}
+        </View>
+      </TouchableOpacity>
+
+      {/* Water Button */}
       <TouchableOpacity 
         className="absolute top-20 right-4 z-10 p-2 rounded-full"
         style={{ backgroundColor: colors.surface }}
         onPress={() => setShowTipsModal(true)}
       >
-        <Ionicons name="star" size={24} color={colors.accent.blue} />
+        <Ionicons name="water" size={48} color={colors.accent.blue}/>
       </TouchableOpacity>
 
       {/* Water Wave Animation */}
       <View className="mb-4 h-full" style={{ backgroundColor: colors.background }}>
         <SkiaWaterWave
-          currentUsage={data?.getReport.usedWater || 0}
+          currentUsage={100}
           normalUsage={STATIC_WATER_DATA.normalUsage}
         />
       </View>
 
-      {/* Tips Modal */}
-      <Modal
+      {/* Notification Modal */}
+      <NotificationModal
+        visible={showNotifications}
+        onClose={() => setShowNotifications(false)}
+        notifications={notifications}
+        onMarkAsRead={markAsRead}
+      />
+
+      {/* Water Saving Certificate */}
+      <WaterSavingCertificate
         visible={showTipsModal}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowTipsModal(false)}
-      >
-        <View className="flex-1 justify-end">
-          <View 
-            className="h-2/3 rounded-t-3xl p-6"
-            style={{ backgroundColor: colors.surface }}
-          >
-            <View className="flex-row justify-between items-center mb-6">
-              <Text 
-                className="text-2xl font-bold"
-                style={{ color: colors.text.primary }}
-              >
-                Water Saving Tips
-              </Text>
-              <TouchableOpacity 
-                onPress={() => setShowTipsModal(false)}
-                className="p-2"
-              >
-                <Ionicons name="close" size={24} color={colors.text.secondary} />
-              </TouchableOpacity>
-            </View>
-
-            <View className="space-y-4">
-              <View className="p-4 rounded-xl" style={{ backgroundColor: colors.primary + '10' }}>
-                <Text 
-                  className="text-lg font-semibold mb-2"
-                  style={{ color: colors.text.primary }}
-                >
-                  Fix Leaks
-                </Text>
-                <Text style={{ color: colors.text.secondary }}>
-                  A dripping faucet can waste up to 20 gallons of water per day. Check and fix any leaks in your home.
-                </Text>
-              </View>
-
-              <View className="p-4 rounded-xl" style={{ backgroundColor: colors.primary + '10' }}>
-                <Text 
-                  className="text-lg font-semibold mb-2"
-                  style={{ color: colors.text.primary }}
-                >
-                  Shorter Showers
-                </Text>
-                <Text style={{ color: colors.text.secondary }}>
-                  Reduce your shower time by 2 minutes to save up to 10 gallons of water per shower.
-                </Text>
-              </View>
-
-              <View className="p-4 rounded-xl" style={{ backgroundColor: colors.primary + '10' }}>
-                <Text 
-                  className="text-lg font-semibold mb-2"
-                  style={{ color: colors.text.primary }}
-                >
-                  Full Loads Only
-                </Text>
-                <Text style={{ color: colors.text.secondary }}>
-                  Run your dishwasher and washing machine only when they are full to maximize water efficiency.
-                </Text>
-              </View>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setShowTipsModal(false)}
+        savedAmount={2000}
+        startDate={new Date(2024, 0, 1)} // Example start date
+      />
     </SafeAreaView>
   );
-}
+};
+
+export default WaterDashboardScreen;
