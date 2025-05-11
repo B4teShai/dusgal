@@ -11,7 +11,7 @@ const CARD_SPACING = 16;
 const subscriptionPlans = [
   {
     name: 'Pro',
-    price: '29,900₮',
+    price: '5,900₮',
     period: 'сараар',
     features: [
       'Дэлгэрэнгүй хэрэглээний шинжилгээ',
