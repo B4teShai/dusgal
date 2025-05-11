@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { ScrollView, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, ScrollView, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../src/context/ThemeContext';
 
@@ -68,12 +69,31 @@ export default function SettingsScreen() {
   const { colors, isDarkMode, toggleDarkMode } = useTheme();
   const [notifications, setNotifications] = React.useState(true);
   const [isEditingPhone, setIsEditingPhone] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('9911-1111');
+  const [phoneNumber, setPhoneNumber] = useState<string>('95990003');
   const router = useRouter();
 
-  const handleSavePhone = () => {
-    // Here you would typically save to backend
-    setIsEditingPhone(false);
+  useEffect(() => {
+    loadPhoneNumber();
+  }, []);
+
+  const loadPhoneNumber = async () => {
+    try {
+      const savedPhone = await AsyncStorage.getItem('phoneNumber');
+      if (savedPhone) {
+        setPhoneNumber(savedPhone);
+      }
+    } catch (error) {
+      console.error('Error loading phone number:', error);
+    }
+  };
+
+  const handleSavePhone = async () => {
+    try {
+      await AsyncStorage.setItem('phoneNumber', phoneNumber);
+      setIsEditingPhone(false);
+    } catch (error) {
+      console.error('Error saving phone number:', error);
+    }
   };
 
   return (
@@ -93,12 +113,7 @@ export default function SettingsScreen() {
           {/* Profile Section */}
           <View className="rounded-3xl p-6 shadow-sm mb-8" style={{ backgroundColor: colors.primary + '15' }}>
             <View className="items-center mb-6">
-              <View 
-                className="w-24 h-24 rounded-full items-center justify-center mb-4"
-                style={{ backgroundColor: colors.primary + '15' }}
-              >
-                <Ionicons name="water" size={48} color={colors.primary} />
-              </View>
+            <Image source={require('../../assets/images/metric.jpg')} style={{ width: 96, height: 96 }} className='rounded-full' />
               <Text 
                 className="text-xl font-semibold mb-1"
                 style={{ color: colors.text.primary }}
@@ -168,7 +183,7 @@ export default function SettingsScreen() {
                   className="text-base"
                   style={{ color: colors.text.secondary }}
                 >
-                  Smart Water Meter Pro
+                  Flow Meters G2
                 </Text>
               </View>
 

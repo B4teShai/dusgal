@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { ResizeMode, Video } from 'expo-av';
 import React from 'react';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
@@ -27,6 +26,13 @@ export default function WaterSavingCertificate({
     });
   };
 
+  // Add tier calculation
+  const getTier = (amount: number) => {
+    if (amount < 1000) return { name: 'Newbie', icon: '🌱', video: require('../public/video/fish1.mov') };
+    if (amount < 10000) return { name: 'Eco Hero', icon: '🌊', video: require('../public/video/fish2.mov') };
+    return { name: 'Water Legend', icon: '👑', video: require('../public/video/fish1.mov') };
+  };
+
   return (
     <Modal
       visible={visible}
@@ -42,12 +48,12 @@ export default function WaterSavingCertificate({
         <TouchableOpacity 
           activeOpacity={1} 
           onPress={(e) => e.stopPropagation()}
-          className="w-4/5 h-[500px] rounded-3xl items-center overflow-hidden"
+          className="w-4/5 h-[430px] rounded-3xl items-center overflow-hidden"
           style={{ backgroundColor: colors.surface }}
         > 
           <View className="w-full h-[240px]">
             <Video
-              source={require('../public/video/fish1.mov')}
+              source={getTier(savedAmount).video}
               className="w-full h-full"
               resizeMode={ResizeMode.CONTAIN}
               isLooping
@@ -59,37 +65,33 @@ export default function WaterSavingCertificate({
           <View className="absolute bottom-0 w-full items-center p-7" 
             style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
             <View className="items-center">
-              <Ionicons name="ribbon" size={48} color={colors.accent.blue} />
+              <View className="flex-row items-center bg-blue-500/20 px-4 py-2 rounded-full">
+                <Text className="text-2xl mr-2">{getTier(savedAmount).icon}</Text>
+                <Text 
+                  className="text-xl font-bold text-center"
+                  style={{ color: colors.accent.blue }}
+                >
+                  {getTier(savedAmount).name}
+                </Text>
+              </View>
               <Text 
                 className="text-3xl font-bold mt-4 text-center"
-                style={{ color: colors.text.primary }}
-              >
-                Баяр хүргэе!
-              </Text>
-              <Text 
-                className="text-xl mt-2 text-center"
-                style={{ color: colors.text.secondary }}
-              >
-                {formatDate(startDate)}-с хойш
-              </Text>
-              <Text 
-                className="text-4xl font-bold mt-2 text-center"
                 style={{ color: colors.accent.blue }}
               >
-                {savedAmount.toLocaleString()}Л
+                {savedAmount.toLocaleString()}L
               </Text>
               <Text 
-                className="text-lg mt-1 text-center"
+                className="text-md mt-2 text-center"
                 style={{ color: colors.text.secondary }}
               >
-                ус хадгалж байна.
+                ус хадгалж чадсан байна.
               </Text>
             </View>
 
             <View className="mt-6 w-full">
               <TouchableOpacity 
                 onPress={onClose}
-                className="bg-blue-500 px-8 py-3 rounded-full items-center"
+                className="bg-blue-500 px-4 py-3 rounded-full items-center flex-row justify-center"
               >
                 <Text className="text-white font-semibold">Хаах</Text>
               </TouchableOpacity>

@@ -193,7 +193,7 @@ export default function SkiaWaterWave({ currentUsage, normalUsage }: SkiaWaterWa
               styles.tooltipTitle, 
               { color: currentUsage > normalUsage ? '#FF4444' : colors.text.primary }
             ]}>
-              {currentUsage > normalUsage ? '⚠️ Усны хэрэглээ их байна!' : 'Усны хэрэглээ'}
+              {currentUsage > normalUsage ? '⚠️ Усны хэрэглээ их байна!' : 'Өнөөдрийн хэрэглээ'}
             </Text>
             <View style={styles.tooltipRow}>
               <Text style={[styles.tooltipLabel, { color: colors.text.secondary }]}>
@@ -203,7 +203,7 @@ export default function SkiaWaterWave({ currentUsage, normalUsage }: SkiaWaterWa
                 styles.tooltipValue, 
                 { color: currentUsage > normalUsage ? '#FF4444' : colors.text.primary }
               ]}>
-                {currentUsage}Л
+                {currentUsage}L
               </Text>
             </View>
             <View style={styles.tooltipRow}>
@@ -211,7 +211,7 @@ export default function SkiaWaterWave({ currentUsage, normalUsage }: SkiaWaterWa
                 Хэвийн хэрэглээ:
               </Text>
               <Text style={[styles.tooltipValue, { color: colors.text.primary }]}>
-                {normalUsage}Л
+                {normalUsage}L
               </Text>
             </View>
             {currentUsage > normalUsage && (
@@ -248,19 +248,28 @@ export default function SkiaWaterWave({ currentUsage, normalUsage }: SkiaWaterWa
       </View>
       {/* Normal usage indicator line */}
       <View
-        
         style={[
           styles.normalLine,
           {
             bottom: `${(normalUsage / maxUsage) * 100}%`,
-            backgroundColor: currentUsage >= normalUsage ? 'white' : colors.primary,
             width: 500,
-            borderStyle: 'dashed',
-            borderWidth: 3,
-            
+            flexDirection: 'row',
+            height: 2,
           },
         ]}
-      />
+      >
+        {Array.from({ length: 50 }).map((_, index) => (
+          <View
+            key={index}
+            style={{
+              width: 10,
+              height: 2,
+              backgroundColor: currentUsage >= normalUsage ? 'white' : colors.primary,
+              marginRight: 10,
+            }}
+          />
+        ))}
+      </View>
     </Pressable>
   );
 }
@@ -355,7 +364,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   tooltipTitle: {
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: 'bold',
     marginBottom: 12,
     textAlign: 'center',

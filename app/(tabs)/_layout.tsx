@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React, { useRef } from 'react';
-import { Animated, View } from 'react-native';
+import { Animated, Image, View } from 'react-native';
 import { useTheme } from '../../src/context/ThemeContext';
 
 export default function TabsLayout() {
@@ -87,7 +87,7 @@ export default function TabsLayout() {
           tabBarIcon: ({ focused }) => (
             <Animated.View 
               style={{ 
-                backgroundColor: colors.primary,
+                backgroundColor: colors.surface,
                 width: 60,
                 height: 60,
                 borderRadius: 30,
@@ -106,7 +106,11 @@ export default function TabsLayout() {
               }}
               onTouchStart={animatePress}
             >
-              <Ionicons name="water-outline" size={28} color="#ffffff" />
+              <Image
+                source={require('../../assets/images/logo.png')}
+                style={{ width: 24, height: 24 }}
+                resizeMode="contain"
+              />
             </Animated.View>
           ),
         }}

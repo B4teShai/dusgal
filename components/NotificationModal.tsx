@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Image, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../src/context/ThemeContext';
 
 export interface Notification {
@@ -8,6 +8,7 @@ export interface Notification {
   title: string;
   message: string;
   type: 'warning' | 'info' | 'success';
+  gif: any;
   timestamp: number;
   read: boolean;
 }
@@ -175,6 +176,16 @@ export default function NotificationModal({
                 {selectedNotification.message}
               </Text>
             </View>
+
+            {selectedNotification.gif && (
+              <View className="items-center mb-3">
+                <Image
+                  source={selectedNotification.gif}
+                  style={{ width: 200, height: 200, borderRadius: 12 }}
+                  resizeMode="contain"
+                />
+              </View>
+            )}
 
             {selectedNotification.type === 'warning' && (
               <View className="p-2 rounded-lg bg-red-50">

@@ -215,6 +215,7 @@ export default function SubscriptionModal({ visible, onClose, currentSubscriptio
               </View>
 
               {/* Current Bill Status */}
+              {currentSubscription === 'pro' && (
               <View className="mb-8 p-6 rounded-3xl" style={{ backgroundColor: colors.primary + '15' }}>
                 <Text
                   className="text-lg font-semibold mb-4"
@@ -260,50 +261,17 @@ export default function SubscriptionModal({ visible, onClose, currentSubscriptio
                   </Text>
                 </TouchableOpacity>
               </View>
-
-              {/* Subscription Plans Carousel */}
-              <View className="mb-8">
-                <FlatList
-                  ref={flatListRef}
-                  data={subscriptionPlans}
-                  renderItem={renderPlanCard}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  snapToInterval={CARD_WIDTH + CARD_SPACING}
-                  decelerationRate="fast"
-                  onMomentumScrollEnd={(event) => {
-                    const index = Math.round(
-                      event.nativeEvent.contentOffset.x / (CARD_WIDTH + CARD_SPACING)
-                    );
-                    setActiveIndex(index);
-                  }}
-                  contentContainerStyle={{
-                    paddingRight: 24,
-                  }}
-                />
-                
-                {/* Pagination Dots */}
-                <View className="flex-row justify-center items-center mt-4 space-x-2">
-                  {subscriptionPlans.map((_, index) => (
-                    <View
-                      key={index}
-                      className={`w-2 h-2 rounded-full ${
-                        index === activeIndex ? 'bg-[#0EA5E9]' : 'bg-gray-300'
-                      }`}
-                    />
-                  ))}
-                </View>
-              </View>
-
-              {/* Payment History */}
-              <View className="mb-8">
+              )}
+{/* Payment History */}
+<View className="mb-8">
                 <Text
                   className="text-lg font-semibold mb-4"
                   style={{ color: colors.text.primary }}
                 >
                   Төлбөрийн түүх
                 </Text>
-                <View className="space-y-4">
+                {currentSubscription === 'pro' ? (
+                  <View className="space-y-4">
                   {paymentHistory.map((payment, index) => (
                     <View
                       key={index}
@@ -340,10 +308,49 @@ export default function SubscriptionModal({ visible, onClose, currentSubscriptio
                     </View>
                   ))}
                 </View>
+              ) : (
+                <View>
+                  <Text>Төлбөрийн түүх үүсээгүй байна</Text>
+                </View>
+              )}
+              </View>
+
+              {/* Subscription Plans Carousel */}
+              <View className="mb-8">
+                <FlatList
+                  ref={flatListRef}
+                  data={subscriptionPlans}
+                  renderItem={renderPlanCard}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  snapToInterval={CARD_WIDTH + CARD_SPACING}
+                  decelerationRate="fast"
+                  onMomentumScrollEnd={(event) => {
+                    const index = Math.round(
+                      event.nativeEvent.contentOffset.x / (CARD_WIDTH + CARD_SPACING)
+                    );
+                    setActiveIndex(index);
+                  }}
+                  contentContainerStyle={{
+                    paddingRight: 24,
+                  }}
+                />
+                
+                {/* Pagination Dots */}
+                <View className="flex-row justify-center items-center mt-4 space-x-2">
+                  {subscriptionPlans.map((_, index) => (
+                    <View
+                      key={index}
+                      className={`w-2 h-2 rounded-full ${
+                        index === activeIndex ? 'bg-[#0EA5E9]' : 'bg-gray-300'
+                      }`}
+                    />
+                  ))}
+                </View>
               </View>
 
               {/* Additional Info */}
-              <View className="mt-8 space-y-4">
+              <View className="mt-4 space-y-4">
                 <Text
                   className="text-lg font-semibold"
                   style={{ color: colors.text.primary }}
